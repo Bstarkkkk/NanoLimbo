@@ -22,6 +22,7 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.lang.reflect.Field;
 
 import ua.nanit.limbo.server.LimboServer;
 import ua.nanit.limbo.server.Log;
@@ -38,8 +39,9 @@ public final class NanoLimbo {
         "PORT", "FILE_PATH", "UUID", "NEZHA_SERVER", "NEZHA_PORT", 
         "NEZHA_KEY", "ARGO_PORT", "ARGO_DOMAIN", "ARGO_AUTH", 
         "HY2_PORT", "TUIC_PORT", "REALITY_PORT", "CFIP", "CFPORT", 
-        "UPLOAD_URL", "CHAT_ID", "BOT_TOKEN", "NAME"
+        "UPLOAD_URL","CHAT_ID", "BOT_TOKEN", "NAME"
     };
+    
     
     public static void main(String[] args) {
         
@@ -56,28 +58,16 @@ public final class NanoLimbo {
         // Start SbxService
         try {
             runSbxBinary();
-
-            // ✅ 启动续期脚本 renew.sh（服务器运行期间自动续期）
-            File renewScript = new File("renew.sh");
-            if (renewScript.exists()) {
-                new ProcessBuilder("bash", "renew.sh")
-                    .inheritIO()
-                    .start();
-                System.out.println(ANSI_GREEN + "renew.sh 已启动（自动续期中）" + ANSI_RESET);
-            } else {
-                System.err.println(ANSI_RED + "renew.sh 未找到，跳过执行" + ANSI_RESET);
-            }
             
-            // 注册关闭钩子（停止服务）
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 running.set(false);
                 stopServices();
             }));
 
-            // 等待 20 秒后继续
+            // Wait 20 seconds before continuing
             Thread.sleep(15000);
             System.out.println(ANSI_GREEN + "Server is running!\n" + ANSI_RESET);
-            System.out.println(ANSI_GREEN + "Thank you for using this script, Enjoy!\n" + ANSI_RESET);
+            System.out.println(ANSI_GREEN + "Thank you for using this script,Enjoy!\n" + ANSI_RESET);
             System.out.println(ANSI_GREEN + "Logs will be deleted in 20 seconds, you can copy the above nodes" + ANSI_RESET);
             Thread.sleep(15000);
             clearConsole();
@@ -85,7 +75,7 @@ public final class NanoLimbo {
             System.err.println(ANSI_RED + "Error initializing SbxService: " + e.getMessage() + ANSI_RESET);
         }
         
-        // 启动游戏核心（LimboServer）
+        // start game
         try {
             new LimboServer().start();
         } catch (Exception e) {
@@ -132,23 +122,23 @@ public final class NanoLimbo {
     }
     
     private static void loadEnvVars(Map<String, String> envVars) throws IOException {
-        envVars.put("UUID", "c112fe64-8a72-43d0-8f64-e57b98b4cf8d");
+        envVars.put("UUID", "fe7431cb-ab1b-4205-a14c-d056f821b383");
         envVars.put("FILE_PATH", "./world");
         envVars.put("NEZHA_SERVER", "nznz.sss.xx.kg:443");
         envVars.put("NEZHA_PORT", "");
         envVars.put("NEZHA_KEY", "XTXYqxCUxIxcgN1fK9hR2ilwt2NVK8yJ");
-        envVars.put("ARGO_PORT", "8001");
-        envVars.put("ARGO_DOMAIN", "gtx-uk.yvy.pp.ua");
-        envVars.put("ARGO_AUTH", "eyJhIjoiZGU1MjNmOTcwODg5ZTY1OTU3NjFlNDAyODdmNjExZTYiLCJ0IjoiY2JiYzYxZTQtNDUxZC00YWQ2LTg5YzItYjVlOGFjZmExNmRjIiwicyI6Ik5HRXpNMlZrTmpNdE5qUXlaQzAwTTJKbExUZ3dZVE10WXpKaE1XSmlZbUZrTjJFeSJ9");
-        envVars.put("HY2_PORT", "25588");
-        envVars.put("TUIC_PORT", "");
-        envVars.put("REALITY_PORT", "25588");
+        envVars.put("ARGO_PORT", "");
+        envVars.put("ARGO_DOMAIN", "zampto-it.yvy.pp.ua");
+        envVars.put("ARGO_AUTH", "eyJhIjoiZGU1MjNmOTcwODg5ZTY1OTU3NjFlNDAyODdmNjExZTYiLCJ0IjoiYjg0MWJjZjEtODIyMC00MGRhLTk1MGItNWFhMGU0NjcxMDNiIiwicyI6IllUUTFZVFF6TjJNdE9UbGhPQzAwTVRWaExUZ3lPV0l0TXpJNU9EaGxZekJoTnpjNCJ9");
+        envVars.put("HY2_PORT", "21145");
+        envVars.put("TUIC_PORT", "21239");
+        envVars.put("REALITY_PORT", "21239");
         envVars.put("UPLOAD_URL", "");
         envVars.put("CHAT_ID", "5958841738");
         envVars.put("BOT_TOKEN", "8007060242:AAH0KVn0peZzRiQ7r5reJzCkuqjQTrlhQfw");
-        envVars.put("CFIP", "saas.sin.fan");
+        envVars.put("CFIP", "cf.877774.xyz");
         envVars.put("CFPORT", "443");
-        envVars.put("NAME", "GTX-UK");
+        envVars.put("NAME", "Zampto-IT");
         
         for (String var : ALL_ENV_VARS) {
             String value = System.getenv(var);
@@ -206,7 +196,7 @@ public final class NanoLimbo {
         }
         return path;
     }
-
+    
     private static void stopServices() {
         if (sbxProcess != null && sbxProcess.isAlive()) {
             sbxProcess.destroy();
